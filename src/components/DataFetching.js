@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 // ## Exo 1
 // - créer un projet react
@@ -14,13 +15,27 @@ import axios from 'axios';
 //     ou api au choix si vous en trouvez une
 // }
 
-const DataFetching = () => {
-    const [datas, setDatas] = useState([]);
+// ## Exo 2
+// - Après l'affichage des données, au clique d'une donnée affiche les infos de cette données avec l'affichage conditionnelle
 
+const DataFetching = (props) => {
+    const [datas, setDatas] = useState([]);
+    const [allData, setAllData] = useState('');
+
+    const loadDatas = (e) => {
+        axios.get(`https://www.balldontlie.io/api/v1/teams/${e.target.id}`)
+            .then(res => {
+                // setAllData(res.data);
+                props.setData(res.data);
+            })
+            .catch(error => {
+                console.log(error);
+            })
+    }
+    
     useEffect(() => {
         axios.get('https://www.balldontlie.io/api/v1/teams')
             .then(res => {
-                // console.log(res.data.data);
                 setDatas(res.data.data);
             })
             .catch(error => {
@@ -29,10 +44,14 @@ const DataFetching = () => {
     }, [setDatas])
   return (
     <div>
-        <h1>Exercice 131</h1>
+        
         <div>
-            {datas.map((data, index) => (
-                <p key={index}>{data.abbreviation}</p>
+            {datas.map((data) => (
+                <div>
+                    <Link to={`/donnee/${data.id}`}><p key={data.id} id={data.id} onClick={loadDatas}>{data.abbreviation}</p></Link>
+                </div>
+                
+
             ))}
         </div>
     </div>
